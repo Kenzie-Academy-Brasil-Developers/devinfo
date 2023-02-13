@@ -119,8 +119,6 @@ export const addDeveloper = async ( req: Request, res: Response): Promise<Respon
 
 export const addDeveloperInfo = async ( req: Request, res: Response): Promise<Response> => {
   try {
-    const developerId: number = parseInt(req.params.id);
-
     const developerInfoData: DeveloperInfo = req.body;
 
     const insertDeveloperInfoQueryString: string = format(
@@ -144,28 +142,11 @@ export const addDeveloperInfo = async ( req: Request, res: Response): Promise<Re
 
     const developerInfoId = developerInfoResult.rows[0].id;
 
-    const updateDeveloperQueryString: string = format(
-      `
-          UPDATE 
-            developers 
-          SET 
-            "developerInfoId" = $1
-          WHERE 
-            id = $2 
-          RETURNING *;
-        `
-    );
-
-    const queryConfigDevelopment: QueryConfig = {
-      text: updateDeveloperQueryString,
-      values: [developerInfoId, developerId],
-    };
-
-    const developerResult: DeveloperResult = await client.query(
-      queryConfigDevelopment
-    );
-
-    return res.status(201).json(developerResult.rows[0]);
+    return res.status(201).json({
+      id: developerInfoId,
+      developerSince: developerInfoData.developerSince,
+      preferredOS: developerInfoData.preferredOS
+    });
   } catch (error: any) {
     return res.status(500).json({
       message: "Internal server error",

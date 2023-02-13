@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
 import format from "pg-format";
-import { DeveloperResult } from "../models/developer/developer";
+import { DeveloperResult } from "../interfaces/developer/developer";
 import { QueryConfig } from "pg";
 import { client } from "../database";
-import { Project, ProjectResult } from "../models/projects/project";
+import { Project, ProjectResult } from "../interfaces/projects/project";
 
 export const getAllProjects = async ( req: Request, res: Response): Promise<Response> => {
+  try {
     const getAllInfoQueryString: string = format(`
     SELECT 
       p.id as "projectID", 
@@ -40,48 +41,61 @@ export const getAllProjects = async ( req: Request, res: Response): Promise<Resp
   );
 
   return res.status(200).json(checkExistenceResult.rows);
+  } catch (error: any) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+    
 };
 
 export const getProjectById = async ( req: Request, res: Response): Promise<Response> => {
-  const id: number = parseInt(req.params.id);
-
-  const getProjectQueryString: string = format(`
-    SELECT 
-       p.id as "projectID", 
-       p.name as "projectName", 
-       p.description as "projectDescription", 
-       p."estimatedTime" as "projectEstimatedTime", 
-       p.repository as "projectRepository", 
-       p."startDate" as "projectStartDate", 
-       p."endDate" as "projectEndDate", 
-       p."developerId" as "projectDeveloperID", 
-       t.id as "technologyID", 
-       t.name as "technologyName"
-    FROM 
-       projects p
-    LEFT JOIN 
-       projects_technologies pt 
-    ON 
-       p.id = pt.id
-    LEFT JOIN 
-       technologies t 
-    ON 
-       pt.id = t.id
-    WHERE 
-       p.id = $1
-    ORDER BY "projectID";       
-    `);
-
-  const getProjectQueryConfig: QueryConfig = {
-    text: getProjectQueryString,
-    values: [id],
-  };
-
-  const getProjectResult: DeveloperResult = await client.query(
-    getProjectQueryConfig
-  );
-
-  return res.status(200).json(getProjectResult.rows);
+  try {
+    const id: number = parseInt(req.params.id);
+   
+    const getProjectQueryString: string = format(`
+      SELECT 
+         p.id as "projectID", 
+         p.name as "projectName", 
+         p.description as "projectDescription", 
+         p."estimatedTime" as "projectEstimatedTime", 
+         p.repository as "projectRepository", 
+         p."startDate" as "projectStartDate", 
+         p."endDate" as "projectEndDate", 
+         p."developerId" as "projectDeveloperID", 
+         t.id as "technologyID", 
+         t.name as "technologyName"
+      FROM 
+         projects p
+      LEFT JOIN 
+         projects_technologies pt 
+      ON 
+         p.id = pt.id
+      LEFT JOIN 
+         technologies t 
+      ON 
+         pt.id = t.id
+      WHERE 
+         p.id = $1
+      ORDER BY "projectID";       
+      `);
+  
+    const getProjectQueryConfig: QueryConfig = {
+      text: getProjectQueryString,
+      values: [id],
+    };
+  
+    const getProjectResult: DeveloperResult = await client.query(
+      getProjectQueryConfig
+    );
+  
+    return res.status(200).json(getProjectResult.rows);
+  } catch (error: any) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+ 
 };
 
 export const addProjects = async ( req: Request, res: Response): Promise<Response> => {
@@ -128,38 +142,45 @@ export const addProjects = async ( req: Request, res: Response): Promise<Respons
 };
 
 export const updateProjects = async ( req: Request, res: Response): Promise<Response> => {
-  const id: number = parseInt(req.params.id);
-
-  const updateData = { id };
-  Object.assign(updateData, req.body);
-
-  const { name, description, estimatedTime, startDate, endDate } = req.body;
-
-  const formatString: string = format(
-    `
-          UPDATE 
-              projects
-          SET 
-             "name" = COALESCE($1, "name"),
-             "description" = COALESCE($2, "description"),
-             "estimatedTime" = COALESCE($3, "estimatedTime"),
-             "startDate" = COALESCE($4, "startDate"),
-             "endDate" = COALESCE($5, "endDate")
-          WHERE
-              id = $6
-          RETURNING 
-              *;
+  try {
+    const id: number = parseInt(req.params.id);
+  
+    const updateData = { id };
+    Object.assign(updateData, req.body);
+  
+    const { name, description, estimatedTime, startDate, endDate } = req.body;
+  
+    const formatString: string = format(
       `
-  );
+            UPDATE 
+                projects
+            SET 
+               "name" = COALESCE($1, "name"),
+               "description" = COALESCE($2, "description"),
+               "estimatedTime" = COALESCE($3, "estimatedTime"),
+               "startDate" = COALESCE($4, "startDate"),
+               "endDate" = COALESCE($5, "endDate")
+            WHERE
+                id = $6
+            RETURNING 
+                *;
+        `
+    );
+  
+    const queryConfig: QueryConfig = {
+      text: formatString,
+      values: [name, description, estimatedTime, startDate, endDate, id],
+    };
+  
+    const queryResult: DeveloperResult = await client.query(queryConfig);
+  
+    return res.status(201).json(queryResult.rows[0]);
 
-  const queryConfig: QueryConfig = {
-    text: formatString,
-    values: [name, description, estimatedTime, startDate, endDate, id],
-  };
-
-  const queryResult: DeveloperResult = await client.query(queryConfig);
-
-  return res.status(201).json(queryResult.rows[0]);
+  } catch (error: any) {
+    return res.status(500).json({
+      message: "Internal server error",
+    });
+  }
 };
 
 export const deleteProject = async ( req: Request, res: Response): Promise<Response> => {

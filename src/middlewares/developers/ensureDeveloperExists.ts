@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { QueryConfig } from "pg";
 import { client } from "../../database";
-import { DeveloperInfo, DeveloperResult } from "../../models/developer/developer";
+import { DeveloperInfo, DeveloperResult } from "../../interfaces/developer/developer";
 
 export const ensureDeveloperExists = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   const { name, email } = req.body;

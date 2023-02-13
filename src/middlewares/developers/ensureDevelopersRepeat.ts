@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { QueryConfig } from "pg";
 import { client } from "../../database";
-import { DeveloperInfo, DeveloperResult } from "../../models/developer/developer";
-import { iDeveloperInfoResultQS } from "../../models/developer/developer";
+import { DeveloperInfo, DeveloperResult } from "../../interfaces/developer/developer";
+import { iDeveloperInfoResultQS } from "../../interfaces/developer/developer";
 
 
 export const ensureDevelopersRepeatMiddleware = async ( request: Request, response: Response, next: NextFunction): Promise<Response | void> => {

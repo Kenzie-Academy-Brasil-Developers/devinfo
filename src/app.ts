@@ -1,6 +1,6 @@
 import express, { Application } from "express";
-import developersRoutes from "./routes/developers";
-import projectsRoutes from "./routes/projects";
+import developersRoutes from "./routes/developers.routes";
+import projectsRoutes from "./routes/projects.routes";
 import { startDatabase } from "./database";
 
 const app: Application = express();

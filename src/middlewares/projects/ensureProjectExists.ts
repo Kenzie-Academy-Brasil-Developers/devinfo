@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { QueryConfig } from "pg";
 import { client } from "../../database";
-import { DeveloperResult } from "../../models/developer/developer";
-import { ProjectResult } from "../../models/projects/project";
+import { DeveloperResult } from "../../interfaces/developer/developer";
+import { ProjectResult } from "../../interfaces/projects/project";
 
 export const ensureProjectExistsMiddleware = async ( req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     const {

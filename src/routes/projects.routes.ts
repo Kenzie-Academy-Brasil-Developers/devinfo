@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProjects, addTechnologiesProjects, deleteProject, deleteTech, getAllProjects, getProjectById, updateProjects } from "../services/projects";
+import { addProjects, addTechnologiesProjects, deleteProject, deleteTech, getAllProjects, getProjectById, updateProjects } from "../services/projects.services";
 import { ensureProjectExistsMiddleware, ensureProjectsExistsIdMiddleware } from "../middlewares/projects/ensureProjectExists";
 import { ensureProjectsExistsDeleteIdMiddleware, ensureProjectsExistsTechnologiesMiddleware, ensureUpdateInfoProjectsExists } from "../middlewares/projects/ensureProjectsRepeat";
 

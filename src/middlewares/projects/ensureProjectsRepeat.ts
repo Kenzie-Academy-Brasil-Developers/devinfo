@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { client } from "../../database";
-import {  Project } from "../../models/projects/project";
+import {  Project } from "../../interfaces/projects/project";
 
 export const ensureUpdateInfoProjectsExists = async ( req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
     try {
@@ -186,6 +186,7 @@ export const ensureUpdateInfoProjectsExists = async ( req: Request, res: Respons
       text: `SELECT * FROM technologies WHERE name = $1`,
       values: [name],
     });
+
   
     if (!queryResultName.rows.length) {
       return res

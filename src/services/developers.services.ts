@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import format from "pg-format";
-import { Developer, DeveloperResult, DeveloperInfo, DeveloperInfoResult } from "../models/developer/developer";
+import { Developer, DeveloperResult, DeveloperInfo, DeveloperInfoResult } from "../interfaces/developer/developer";
 import { QueryConfig } from "pg";
 import { client } from "../database";
 
